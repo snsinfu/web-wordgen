@@ -32,24 +32,25 @@ func (distr *Distribution) Likelihood(sample string) float64 {
 	return 0
 }
 
-// Generate
+// Generate randomly generates a word-like string that starts with given prefix.
 func (model *Model) Generate(random *rand.Rand, prefix string) (string, float64) {
+	var start string
 	if len(prefix) == 0 {
-		prefix, _ = model.start.Draw(random)
+		start, _ = model.start.Draw(random)
 	} else {
-		prefix = model.preparePrefix(random, prefix)
+		start = model.preparePrefix(random, prefix)
 	}
-	return model.generateFrom(random, prefix)
+	return model.generate(random, start)
 }
 
-func (model *Model) generateFrom(random *rand.Rand, start string) (string, float64) {
+func (model *Model) generate(random *rand.Rand, start string) (string, float64) {
 	word := start
 	logLik := 0.0
 	steps := 0
 
 	for !strings.HasSuffix(word, model.metadata.Suffix) {
-		tail := model.tail(word)
-		distr := model.transitions[tail]
+		tail := len(word) - model.metadata.Ngram
+		distr := model.transitions[word[tail:]]
 		nextChar, lik := distr.Draw(random)
 		word += nextChar
 		logLik += math.Log(lik)
@@ -81,7 +82,7 @@ func (model *Model) preparePrefix(random *rand.Rand, prefix string) string {
 		for valid := range model.transitions {
 			valid = strings.TrimPrefix(valid, model.metadata.Prefix)
 			if strings.HasPrefix(valid, tail) {
-				candidates = append(candidates, stem + valid)
+				candidates = append(candidates, stem+valid)
 			}
 		}
 
@@ -91,12 +92,4 @@ func (model *Model) preparePrefix(random *rand.Rand, prefix string) string {
 	}
 
 	panic("FIXME")
-}
-
-func (model *Model) tail(str string) string {
-	tail := len(str) - model.metadata.Ngram
-	if tail < 0 {
-		tail = 0
-	}
-	return str[tail:]
 }
