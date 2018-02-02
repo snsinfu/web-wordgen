@@ -91,24 +91,15 @@ class Main:
             if is_start(ngram):
                 start_distr[ngram] = sum(counts.values())
 
-        # Sort in the decreasing order
-        start_distr = collections.Counter(start_distr).most_common()
-
-        return transpose(start_distr)
+        return build_distribution(start_distr)
 
     def _build_transition_table(self, pair_counts):
         transition_table = {}
 
         for key, succ_counts in pair_counts.items():
-            succs, counts = transpose(succ_counts.most_common())
-            succs = ''.join(succs)
-            transition_table[key] = (succs, counts)
+            transition_table[key] = build_distribution(succ_counts)
 
         return transition_table
-
-
-def transpose(lists):
-    return list(zip(*lists))
 
 
 def generate_ngram_pairs(words, n, backward):
@@ -137,6 +128,17 @@ def generate_pairs(seq):
     for curr in it:
         yield prev, curr
         prev = curr
+
+
+def build_distribution(count_dict):
+    # Sort in the decreasing order
+    distr = collections.Counter(count_dict).most_common()
+    candidates, weights = transpose(distr)
+    return {'c': candidates, 'w': weights}
+
+
+def transpose(lists):
+    return list(zip(*lists))
 
 
 if __name__ == '__main__':
