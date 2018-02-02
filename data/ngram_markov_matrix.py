@@ -38,11 +38,12 @@ class Main:
         self._dest = dest
         self._n = n
         self._backward = backward
+        self._words = None
 
     def run(self):
         doc = self._load_document()
-        words = re.findall(WORD_REGEX, doc)
-        pair_counts = self._count_pairs(words)
+        self._words = list(set(re.findall(WORD_REGEX, doc)))
+        pair_counts = self._count_pairs(self._words)
         self._output(pair_counts)
 
     def _load_document(self):
@@ -72,8 +73,9 @@ class Main:
             },
             'data': {
                 'start': start_distr,
-                'transitions': transition_table
-            }
+                'transitions': transition_table,
+                'words': self._words
+            },
         }
         json.dump(output_bundle, self._dest, separators=(',', ':'))
 
