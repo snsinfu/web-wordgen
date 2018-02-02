@@ -1,3 +1,6 @@
+# Copyright (c) 2018 snsinfu
+# This code is released under the MIT License.
+
 import argparse
 import collections
 import json
