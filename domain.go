@@ -4,18 +4,17 @@ import (
 	"errors"
 	"math/rand"
 	"os"
+	"time"
 
 	"github.com/snsinfu/web-wordgen/wordgen"
 )
 
 type DomainConfig struct {
-	Seed     int64
 	Models   map[string]string
 	MaxRetry int
 }
 
 type Domain struct {
-	random   *rand.Rand
 	models   map[string]*wordgen.Model
 	maxRetry int
 }
@@ -31,8 +30,6 @@ var (
 )
 
 func NewDomain(config DomainConfig) (*Domain, error) {
-	random := rand.New(rand.NewSource(config.Seed))
-
 	models := map[string]*wordgen.Model{}
 	for name, path := range config.Models {
 		src, err := os.Open(path)
@@ -49,7 +46,6 @@ func NewDomain(config DomainConfig) (*Domain, error) {
 	}
 
 	domain := Domain{
-		random:   random,
 		models:   models,
 		maxRetry: config.MaxRetry,
 	}
@@ -75,10 +71,12 @@ func (d *Domain) RequestWords(name, prefix string, count int) ([]Word, error) {
 	}
 	retry := d.maxRetry
 
+	seed := time.Now().UnixNano()
+	random := rand.New(rand.NewSource(seed))
 	words := []Word{}
 
 	for len(words) < count && retry >= 0 {
-		word, likelihood := model.Generate(d.random)
+		word, likelihood := model.Generate(random)
 
 		if _, known := knownWords[word]; known {
 			retry--

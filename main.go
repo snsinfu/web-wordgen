@@ -33,11 +33,6 @@ func main() {
 }
 
 func makeNewDomain() (*Domain, error) {
-	seed, err := strconv.ParseInt(os.Getenv("WORDGEN_SEED"), 10, 64)
-	if err != nil {
-		return nil, err
-	}
-
 	models := map[string]string{}
 	if err := json.Unmarshal([]byte(os.Getenv("WORDGEN_MODELS")), &models); err != nil {
 		return nil, err
@@ -49,7 +44,6 @@ func makeNewDomain() (*Domain, error) {
 	}
 
 	return NewDomain(DomainConfig{
-		Seed:     seed,
 		Models:   models,
 		MaxRetry: maxRetry,
 	})
