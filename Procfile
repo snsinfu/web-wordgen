@@ -1,1 +1,1 @@
-web: wordgen
+web: web-wordgen
