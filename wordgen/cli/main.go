@@ -18,28 +18,28 @@ func main() {
 
 func run() error {
 	if len(os.Args) != 2 && len(os.Args) != 3 {
-		return errors.New("specify a model file")
+		return errors.New("specify a model file and optionally a prefix")
 	}
 
-	src, err := os.Open(os.Args[1])
+	modelSrc, err := os.Open(os.Args[1])
 	if err != nil {
 		return err
 	}
-	defer src.Close()
+	defer modelSrc.Close()
 
-	model, err := wordgen.Load(src)
+	model, err := wordgen.Load(modelSrc)
 	if err != nil {
 		return err
 	}
-
-	random := rand.New(rand.NewSource(time.Now().UnixNano()))
-	knownWords := model.KnownWords()
 
 	if len(os.Args) == 3 {
 		if err := model.SetPrefix(os.Args[2]); err != nil {
 			return err
 		}
 	}
+
+	random := rand.New(rand.NewSource(time.Now().UnixNano()))
+	knownWords := model.KnownWords()
 
 	for i := 0; i < 100; {
 		word, lik := model.Generate(random)
