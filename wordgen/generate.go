@@ -20,19 +20,6 @@ func (distr *Distribution) Draw(random *rand.Rand) (string, float64) {
 	panic("invalid distribution")
 }
 
-// Likelihood calculates the likelihood of given sample in a distribution.
-// Currently this operation is O(n) where n is the numner of candidates in the
-// distribution.
-func (distr *Distribution) Likelihood(sample string) float64 {
-	for i, cand := range distr.candidates {
-		if sample == cand {
-			weight := distr.weights[i]
-			return float64(weight) / float64(distr.weightSum)
-		}
-	}
-	return 0
-}
-
 // SetPrefix fixes the prefix of a generted word.
 func (model *Model) SetPrefix(prefix string) error {
 	prefix = model.metadata.Prefix + prefix
