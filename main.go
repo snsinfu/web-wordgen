@@ -25,7 +25,7 @@ func main() {
 	}
 
 	action := NewAction(domain)
-	e.POST("/words/request", action.PostWordsRequest)
+	e.POST("/requests", action.PostRequest)
 
 	e.File("/", "index.html")
 
