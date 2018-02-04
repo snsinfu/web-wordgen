@@ -17,6 +17,7 @@ func main() {
 	e.Use(middleware.SecureWithConfig(middleware.SecureConfig{
 		XSSProtection:      "1; mode=block",
 		ContentTypeNosniff: "nosniff",
+		XFrameOptions:      "DENY",
 	}))
 
 	domain, err := makeNewDomain()
