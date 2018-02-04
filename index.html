@@ -38,11 +38,7 @@
         min-width: 12ex;
       }
 
-      #results {
-        text-align: justify;
-      }
-
-      #results > span {
+      #output > p.word-list > span {
         display: inline-block;
         padding: 0 5px;
         margin: 5px;
@@ -73,7 +69,7 @@
         <input type="submit" value="Go!">
       </form>
 
-      <p id="results"></p>
+      <div id="output"></div>
     </main>
 
     <footer>
@@ -85,23 +81,33 @@
     <script>
       function setup() {
         u('form').ajax(function(err, res) {
-          if (err || res.error) {
+          var output = u('#output').empty();
+
+          if (err) {
+            showError(output, res ? res.error : 'request failed');
+          } else {
+            showWords(output, res.words);
           }
-
-          var words = res.words;
-          words.sort(function(lhs, rhs) {
-            return rhs.p - lhs.p;
-          });
-
-          var results = u('#results');
-          results.empty();
-          words.forEach(function(word) {
-            results.append(u('<span>').text(word.w + ' '));
-          });
         });
 
         u('select[form="request-words"]').on('change', function() {
           generate();
+        });
+      }
+
+      function showError(output, err) {
+        output.append('<span class="error label">Error</span>');
+      }
+
+      function showWords(output, words) {
+        var para = u('<p>').addClass('word-list');
+        output.append(para);
+
+        words.sort(function(lhs, rhs) {
+          return rhs.p - lhs.p;
+        });
+        words.forEach(function(word) {
+          para.append(u('<span>').text(word.w + ' '));
         });
       }
 
