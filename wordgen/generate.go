@@ -46,7 +46,7 @@ func (model *Model) SetPrefix(prefix string) error {
 		counts := []int{}
 
 		for ngram, distr := range model.transitions {
-			if strings.HasPrefix(ngram, prefixEnd) {
+			if strings.HasPrefix(ngram, prefixEnd) && model.isGenerative(ngram) {
 				candidates = append(candidates, prefixStem+ngram)
 				counts = append(counts, distr.weightSum)
 			}
@@ -62,6 +62,19 @@ func (model *Model) SetPrefix(prefix string) error {
 	}
 
 	return errors.New("prefix not recognizable")
+}
+
+func (model *Model) isGenerative(ngram string) bool {
+	for !strings.HasSuffix(ngram, model.metadata.Suffix) {
+		distr := model.transitions[ngram]
+		if len(distr.candidates) > 1 {
+			return true
+		}
+
+		nextChar := model.transitions[ngram].candidates[0]
+		ngram = (ngram + nextChar)[1:]
+	}
+	return false
 }
 
 // Generate randomly generates a word-like string. Returns a generated word and
