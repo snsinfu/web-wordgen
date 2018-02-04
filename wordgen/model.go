@@ -120,3 +120,9 @@ func makeDistribution(hist Histogram) (Distribution, error) {
 func (model *Model) KnownWords() map[string]bool {
 	return model.knownWords
 }
+
+// Copy creates a copy of existing model.
+func (model *Model) Copy() *Model {
+	copyModel := *model
+	return &copyModel
+}
