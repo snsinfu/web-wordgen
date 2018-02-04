@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="content-security-policy" content="default-src 'self'; style-src unpkg.com 'unsafe-inline'; script-src unpkg.com 'unsafe-inline'; img-src 'self' data:">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Wordgen</title>
+
+    <link href="https://unpkg.com/picnic" rel="stylesheet">
+    <script src="https://unpkg.com/umbrellajs"></script>
+
+    <style>
+      body {
+        font-size: 1em;
+      }
+
+      main {
+        margin: 4em 1ex 0 1ex;
+      }
+
+      footer {
+        padding: 1ex;
+        margin-top: 2em;
+        border-top: 1px solid #ddd;
+        font-size: 90%;
+        color: #888;
+      }
+
+      form {
+        max-width: 600px;
+        margin: auto;
+        text-align: center;
+      }
+
+      select {
+        min-width: 12ex;
+      }
+
+      #results {
+        text-align: justify;
+      }
+
+      #results > span {
+        display: inline-block;
+        padding: 0 5px;
+        margin: 5px;
+        border-bottom: 5px solid #eee;
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav>
+      <span class="brand">Wordgen</span>
+      <input id="menu" type="checkbox" class="show">
+      <label for="menu" class="burger toggle pseudo button">&#8801;</label>
+
+      <div class="menu" data-tooltip="Word model">
+        <select name="model" form="request-words">
+          <option value="Simple">Simple</option>
+          <option value="Universe">Universe</option>
+          <option value="Name">Name</option>
+        </select>
+      </div>
+    </nav>
+
+    <main>
+      <form method="post" action="/words/request" id="request-words">
+        <input name="prefix" placeholder="Start with...">
+        <input name="count" type="number" value="100" hidden>
+        <input type="submit" value="Go!">
+      </form>
+
+      <p id="results"></p>
+    </main>
+
+    <footer>
+      The Simple model was trained with <a href="https://www.eff.org/files/2016/07/18/eff_large_wordlist.txt">EFF's long word list</a>.
+      The Universe model was trained with EFF's list plus <a href="http://cvsweb.netbsd.org/bsdweb.cgi/src/share/dict/">NetBSD's web2 word list</a>.
+      The Name model was trained with NetBSD's propernames and usernames.txt found in <a href="https://github.com/jeanphorn/wordlist">jeanphorn/wordlist</a>.
+    </footer>
+
+    <script>
+      function setup() {
+        u('form').ajax(function(err, res) {
+          if (err || res.error) {
+          }
+
+          var words = res.words;
+          words.sort(function(lhs, rhs) {
+            return rhs.p - lhs.p;
+          });
+
+          var results = u('#results');
+          results.empty();
+          words.forEach(function(word) {
+            results.append(u('<span>').text(word.w + ' '));
+          });
+        });
+
+        u('select[form="request-words"]').on('change', function() {
+          generate();
+        });
+      }
+
+      function generate() {
+        u('form#request-words').trigger('submit');
+      }
+
+      window.addEventListener('load', function() {
+        setup();
+        generate();
+      });
+    </script>
+  </body>
+</html>
