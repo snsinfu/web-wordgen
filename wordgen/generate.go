@@ -22,6 +22,15 @@ func (distr *Distribution) Draw(random *rand.Rand) (string, float64) {
 
 // SetPrefix fixes the prefix of a generted word.
 func (model *Model) SetPrefix(prefix string) error {
+	// Basically, we use the ending n-gram of specified prefix as the initial
+	// state of a Markov chain. Here, we need to deal with these edge cases:
+	//
+	// - The prefix is shorter than n characters.
+	// - The ending n-gram did not appear in training data (unknown n-gram).
+	//
+	// We deal with the issues by capping the end of the prefix with known
+	// n-grams. The result is a distribution of capped prefixes.
+
 	prefix = model.metadata.Prefix + prefix
 
 	cutpos := len(prefix) - model.metadata.Ngram
