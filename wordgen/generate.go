@@ -64,18 +64,21 @@ func (model *Model) SetPrefix(prefix string) error {
 	return errors.New("prefix not recognizable")
 }
 
-// Generate randomly generates a word-like string.
+// Generate randomly generates a word-like string. Returns a generated word and
+// the likelihood of the word.
 func (model *Model) Generate(random *rand.Rand) (string, float64) {
-	word, startLik := model.prefix.Draw(random)
-	logLik := math.Log(startLik)
+	word, lik := model.prefix.Draw(random)
+	logLik := math.Log(lik)
 	steps := 0
 
 	for !strings.HasSuffix(word, model.metadata.Suffix) {
 		tail := len(word) - model.metadata.Ngram
 		distr := model.transitions[word[tail:]]
 		nextChar, lik := distr.Draw(random)
+
 		word += nextChar
 		logLik += math.Log(lik)
+
 		steps++
 	}
 
