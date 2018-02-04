@@ -1,0 +1,32 @@
+body {
+  font-size: 1em;
+}
+
+main {
+  margin: 4em 1ex 0 1ex;
+}
+
+footer {
+  padding: 1ex;
+  margin-top: 2em;
+  border-top: 1px solid #ddd;
+  font-size: 90%;
+  color: #888;
+}
+
+form {
+  max-width: 600px;
+  margin: auto;
+  text-align: center;
+}
+
+select {
+  min-width: 12ex;
+}
+
+#output > p.word-list > span {
+  display: inline-block;
+  padding: 0 5px;
+  margin: 5px;
+  border-bottom: 5px solid #eee;
+}

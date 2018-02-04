@@ -28,6 +28,8 @@ func main() {
 	e.POST("/requests", action.PostRequest)
 
 	e.File("/", "index.html")
+	e.File("/index.css", "index.css")
+	e.File("/index.js", "index.js")
 
 	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
 }
