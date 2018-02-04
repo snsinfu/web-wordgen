@@ -1,6 +1,7 @@
 package wordgen
 
 import (
+	"errors"
 	"math"
 	"math/rand"
 	"strings"
@@ -34,7 +35,37 @@ func (distr *Distribution) Likelihood(sample string) float64 {
 
 // SetPrefix fixes the prefix of a generted word.
 func (model *Model) SetPrefix(prefix string) error {
-	return nil
+	prefix = model.metadata.Prefix + prefix
+
+	cutpos := len(prefix) - model.metadata.Ngram
+	if cutpos < 0 {
+		cutpos = 0
+	}
+
+	for ; cutpos < len(prefix); cutpos++ {
+		prefixStem := prefix[:cutpos]
+		prefixEnd := prefix[cutpos:]
+
+		candidates := []string{}
+		counts := []int{}
+
+		for ngram, distr := range model.transitions {
+			if strings.HasPrefix(ngram, prefixEnd) {
+				candidates = append(candidates, prefixStem+ngram)
+				counts = append(counts, distr.weightSum)
+			}
+		}
+
+		if len(candidates) > 0 {
+			model.prefix, _ = makeDistribution(Histogram{
+				Candidates: candidates,
+				Counts:     counts,
+			})
+			return nil
+		}
+	}
+
+	return errors.New("prefix not recognizable")
 }
 
 // Generate randomly generates a word-like string.
