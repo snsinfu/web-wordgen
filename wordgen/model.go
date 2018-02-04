@@ -45,6 +45,7 @@ type Distribution struct {
 type Model struct {
 	metadata    Metadata
 	start       Distribution
+	prefix      Distribution
 	transitions map[string]Distribution
 	knownWords  map[string]bool
 }
@@ -88,6 +89,7 @@ func New(config ModelConfig) (*Model, error) {
 	model := Model{
 		metadata:    config.Metadata,
 		start:       start,
+		prefix:      start,
 		transitions: transitions,
 		knownWords:  knownWords,
 	}

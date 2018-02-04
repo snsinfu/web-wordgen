@@ -32,20 +32,15 @@ func (distr *Distribution) Likelihood(sample string) float64 {
 	return 0
 }
 
-// Generate randomly generates a word-like string that starts with given prefix.
-func (model *Model) Generate(random *rand.Rand, prefix string) (string, float64) {
-	var start string
-	if len(prefix) == 0 {
-		start, _ = model.start.Draw(random)
-	} else {
-		start = model.preparePrefix(random, prefix)
-	}
-	return model.generate(random, start)
+// SetPrefix fixes the prefix of a generted word.
+func (model *Model) SetPrefix(prefix string) error {
+	return nil
 }
 
-func (model *Model) generate(random *rand.Rand, start string) (string, float64) {
-	word := start
-	logLik := 0.0
+// Generate randomly generates a word-like string.
+func (model *Model) Generate(random *rand.Rand) (string, float64) {
+	word, startLik := model.prefix.Draw(random)
+	logLik := math.Log(startLik)
 	steps := 0
 
 	for !strings.HasSuffix(word, model.metadata.Suffix) {

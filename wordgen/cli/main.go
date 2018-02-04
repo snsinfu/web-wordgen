@@ -35,14 +35,14 @@ func run() error {
 	random := rand.New(rand.NewSource(time.Now().UnixNano()))
 	knownWords := model.KnownWords()
 
-	prefix := ""
 	if len(os.Args) == 3 {
-		prefix = os.Args[2]
+		if err := model.SetPrefix(os.Args[2]); err != nil {
+			return err
+		}
 	}
 
 	for i := 0; i < 100; {
-		word, lik := model.Generate(random, "")
-		word = prefix + word // FIXME
+		word, lik := model.Generate(random)
 
 		if _, known := knownWords[word]; known {
 			continue
