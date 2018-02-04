@@ -69,7 +69,7 @@ func (model *Model) SetPrefix(prefix string) error {
 func (model *Model) Generate(random *rand.Rand) (string, float64) {
 	word, lik := model.prefix.Draw(random)
 	logLik := math.Log(lik)
-	steps := 0
+	steps := 1
 
 	for !strings.HasSuffix(word, model.metadata.Suffix) {
 		tail := len(word) - model.metadata.Ngram
