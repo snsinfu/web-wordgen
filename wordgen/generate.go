@@ -90,32 +90,3 @@ func (model *Model) Generate(random *rand.Rand) (string, float64) {
 
 	return word, meanLik
 }
-
-func (model *Model) preparePrefix(random *rand.Rand, prefix string) string {
-
-	maxTail := model.metadata.Ngram
-	if maxTail > len(prefix) {
-		maxTail = len(prefix)
-	}
-
-	for tailSize := maxTail; tailSize > 0; tailSize-- {
-		split := len(prefix) - tailSize
-		stem := prefix[:split]
-		tail := prefix[split:]
-
-		candidates := []string{}
-
-		for valid := range model.transitions {
-			valid = strings.TrimPrefix(valid, model.metadata.Prefix)
-			if strings.HasPrefix(valid, tail) {
-				candidates = append(candidates, stem+valid)
-			}
-		}
-
-		if len(candidates) != 0 {
-			return model.metadata.Prefix + candidates[rand.Intn(len(candidates))]
-		}
-	}
-
-	panic("FIXME")
-}
