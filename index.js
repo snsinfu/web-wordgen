@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  window.addEventListener('load', function() {
+  document.addEventListener('DOMContentLoaded', function() {
     setup();
     generate();
   });
