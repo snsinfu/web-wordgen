@@ -14,7 +14,7 @@
   };
 
   function setup() {
-    var submitButton = u('form#request-words > input[type="submit"]');
+    var submitButton = u('form > input[type="submit"]');
 
     u('form').ajax(function(err, res) {
       var output = u('#output').empty();
@@ -37,7 +37,7 @@
   }
 
   function generate() {
-    u('form#request-words').trigger('submit');
+    u('form').trigger('submit');
   }
 
   function showError(output, err) {
