@@ -6,15 +6,29 @@
     generate();
   });
 
+  u.prototype.removeAttr = function(attr) {
+    this.each(function(el) {
+      el.removeAttribute(attr);
+    });
+    return this;
+  };
+
   function setup() {
+    var submitButton = u('form#request-words > input[type="submit"]');
+
     u('form').ajax(function(err, res) {
       var output = u('#output').empty();
-
-      if (err) {
-        showError(output, res ? res.error : 'request failed');
-      } else {
-        showWords(output, res.words);
+      try {
+        if (err) {
+          showError(output, res ? res.error : 'request failed');
+        } else {
+          showWords(output, res.words);
+        }
+      } finally {
+        submitButton.removeAttr('disabled');
       }
+    }, function(xhr) {
+      submitButton.attr({ disabled: 'disabled' });
     });
 
     u('select[form="request-words"]').on('change', function() {
