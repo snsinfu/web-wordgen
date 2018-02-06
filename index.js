@@ -84,7 +84,6 @@
       e.preventDefault();
 
       var request = new XMLHttpRequest();
-      var data = new FormData(form);
 
       var callback = function(err, res) {
         try {
@@ -99,11 +98,7 @@
       };
 
       var handleError = function(e) {
-        var debug = '';
-        for(var pair of data.entries()) {
-          debug += pair[0] + '=' + pair[1] + ' / ';
-        }
-        callback(new Error('request failed: ' + debug), null);
+        callback(new Error('request failed'), null);
       };
 
       var handleLoad = function(e) {
@@ -118,7 +113,17 @@
       request.addEventListener('load', handleLoad);
 
       request.open(form.method, form.action);
-      request.send(data);
+      request.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
+      request.send(urlencode(form));
     });
+  }
+
+  // URL-encode form elements.
+  function urlencode(form) {
+    var query = '';
+    for (var kv of new FormData(form)) {
+      query += '&' + encodeURIComponent(kv[0]) + '=' + encodeURIComponent(kv[1]);
+    }
+    return query.slice(1);
   }
 })()
