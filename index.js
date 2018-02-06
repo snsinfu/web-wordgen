@@ -113,17 +113,7 @@
       request.addEventListener('load', handleLoad);
 
       request.open(form.method, form.action);
-      request.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
-      request.send(urlencode(form));
+      request.send(new FormData(form));
     });
-  }
-
-  // URL-encode form elements.
-  function urlencode(form) {
-    var query = '';
-    for (var kv of new FormData(form)) {
-      query += '&' + encodeURIComponent(kv[0]) + '=' + encodeURIComponent(kv[1]);
-    }
-    return query.slice(1);
   }
 })()
