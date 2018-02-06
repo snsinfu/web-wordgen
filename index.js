@@ -32,7 +32,7 @@
 
   function generate() {
     var form = document.getElementById('request-words');
-    form.dispatchEvent(new CustomEvent('submit'));
+    form.dispatchEvent(new CustomEvent('submit', { cancelable: true }));
   }
 
   function showError(output, err) {
