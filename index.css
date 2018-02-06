@@ -24,7 +24,7 @@ select {
   min-width: 12ex;
 }
 
-#output > p.word-list > span {
+#output > span.word {
   display: inline-block;
   padding: 0 5px;
   margin: 5px;

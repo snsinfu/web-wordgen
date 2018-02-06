@@ -47,12 +47,10 @@
     });
 
     words.forEach(function(word) {
-      frag.appendChild(element('span', '', word.w + ' '));
+      frag.appendChild(element('span', 'word', word.w + ' '));
     });
 
-    var para = element('p', 'word-list');
-    para.appendChild(frag);
-    output.appendChild(para);
+    output.appendChild(frag);
   }
 
   function element(name, cls, text) {
