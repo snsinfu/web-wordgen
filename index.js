@@ -6,54 +6,112 @@
     generate();
   });
 
-  u.prototype.removeAttr = function(attr) {
-    this.each(function(el) {
-      el.removeAttribute(attr);
-    });
-    return this;
-  };
-
   function setup() {
-    var submitButton = u('form > input[type="submit"]');
+    var form = document.getElementById('request-words');
+    var output = document.getElementById('output');
+    var select = document.querySelector('select[form="request-words"]');
 
-    u('form').ajax(function(err, res) {
-      var output = u('#output').empty();
-      try {
-        if (err) {
-          showError(output, res ? res.error : 'request failed');
-        } else {
-          showWords(output, res.words);
-        }
-      } finally {
-        submitButton.removeAttr('disabled');
+    ajax(form, function(err, res) {
+      empty(output);
+
+      if (res) {
+        res = JSON.parse(res);
       }
-    }, function(xhr) {
-      submitButton.attr({ disabled: 'disabled' });
+
+      if (err) {
+        showError(output, res ? res.error : 'request failed');
+      } else {
+        showWords(output, res.words);
+      }
     });
 
-    u('select[form="request-words"]').on('change', function() {
+    select.addEventListener('change', function(e) {
       generate();
     });
   }
 
   function generate() {
-    u('form').trigger('submit');
+    var form = document.getElementById('request-words');
+    form.dispatchEvent(new CustomEvent('submit'));
   }
 
   function showError(output, err) {
-    output.append('<span class="error label">Error</span>');
+    output.appendChild(element('span', 'error label', 'Error'));
   }
 
   function showWords(output, words) {
-    var para = u('<p>').addClass('word-list');
-    output.append(para);
+    var frag = document.createDocumentFragment();
 
     words.sort(function(lhs, rhs) {
       return rhs.p - lhs.p;
     });
 
     words.forEach(function(word) {
-      para.append(u('<span>').text(word.w + ' '));
+      frag.appendChild(element('span', '', word.w + ' '));
+    });
+
+    var para = element('p', 'word-list');
+    para.appendChild(frag);
+    output.appendChild(para);
+  }
+
+  function element(name, cls, text) {
+    var el = document.createElement(name);
+
+    if (cls) {
+      el.className = cls;
+    }
+
+    if (text) {
+      el.appendChild(document.createTextNode(text));
+    }
+
+    return el;
+  }
+
+  function empty(node) {
+    while (node.firstChild) {
+      node.removeChild(node.firstChild);
+    }
+  }
+
+  function ajax(form, cb) {
+    var button = form.querySelector('input[type="submit"]');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      var request = new XMLHttpRequest();
+
+      var callback = function(err, res) {
+        try {
+          cb(err, res);
+        } finally {
+          button.removeAttribute('disabled');
+        }
+      };
+
+      var handleStart = function(e) {
+        button.setAttribute('disabled', 'disabled');
+      };
+
+      var handleError = function(e) {
+        callback(new Error("request failed"), null);
+      };
+
+      var handleLoad = function(e) {
+        var err = /^[45]/.test(request.status) && new Error(request.statusText);
+        callback(err, request.response);
+      };
+
+      request.addEventListener('loadstart', handleStart);
+      request.addEventListener('error', handleError);
+      request.addEventListener('timeout', handleError);
+      request.addEventListener('abort', handleError);
+      request.addEventListener('load', handleLoad);
+
+      request.open(form.method, form.action);
+      request.send(new FormData(form));
     });
   }
 })()
