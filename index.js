@@ -112,8 +112,24 @@
       request.addEventListener('abort', handleError);
       request.addEventListener('load', handleLoad);
 
-      request.open(form.method, form.action);
-      request.send(new FormData(form));
+      var data = new FormData(form);
+
+      if (form.method.toUpperCase() === "GET") {
+        request.open(form.method, form.action + '?' + makeQuery(data));
+        request.send();
+      } else {
+        request.open(form.method, form.action);
+        request.send(data);
+      }
     });
+  }
+
+  // Build a query string that encodes the data stored in a FormData object.
+  function makeQuery(formdata) {
+    var query = '';
+    for (var kv of formdata) {
+      query += '&' + encodeURIComponent(kv[0]) + '=' + encodeURIComponent(kv[1]);
+    }
+    return query.slice(1);
   }
 })()
