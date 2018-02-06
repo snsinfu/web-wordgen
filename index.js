@@ -42,6 +42,7 @@
   function showWords(output, words) {
     var frag = document.createDocumentFragment();
 
+    // Make words with higher likelihood come first.
     words.sort(function(lhs, rhs) {
       return rhs.p - lhs.p;
     });
@@ -53,6 +54,7 @@
     output.appendChild(frag);
   }
 
+  // Create an element with specified class and text content.
   function element(name, cls, text) {
     var el = document.createElement(name);
 
@@ -67,12 +69,14 @@
     return el;
   }
 
+  // Remove all children nodes.
   function empty(node) {
     while (node.firstChild) {
       node.removeChild(node.firstChild);
     }
   }
 
+  // Change form to fire an AJAX when the submit button is pressed.
   function ajax(form, cb) {
     var button = form.querySelector('input[type="submit"]');
 
