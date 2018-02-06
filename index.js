@@ -36,7 +36,7 @@
   }
 
   function showError(output, err) {
-    output.appendChild(element('span', 'error label', 'Error'));
+    output.appendChild(element('span', 'error label', String(err)));
   }
 
   function showWords(output, words) {
