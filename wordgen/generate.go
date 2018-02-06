@@ -7,6 +7,10 @@ import (
 	"strings"
 )
 
+const (
+	hardMaxSteps = 32
+)
+
 // Draw randomly draws a string from a distribution.
 func (distr *Distribution) Draw(random *rand.Rand) (string, float64) {
 	part := random.Intn(distr.weightSum)
@@ -93,6 +97,10 @@ func (model *Model) Generate(random *rand.Rand) (string, float64) {
 		logLik += math.Log(lik)
 
 		steps++
+
+		if steps == hardMaxSteps {
+			break
+		}
 	}
 
 	word = strings.TrimPrefix(word, model.metadata.Prefix)
