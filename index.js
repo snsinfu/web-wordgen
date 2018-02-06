@@ -19,7 +19,7 @@
       }
 
       if (err) {
-        showError(output, res ? res.error : 'request failed');
+        showError(output, res ? res.error : String(err));
       } else {
         showWords(output, res.words);
       }
@@ -36,7 +36,7 @@
   }
 
   function showError(output, err) {
-    output.appendChild(element('span', 'error label', String(err)));
+    output.appendChild(element('span', 'error label', err));
   }
 
   function showWords(output, words) {
@@ -84,6 +84,7 @@
       e.preventDefault();
 
       var request = new XMLHttpRequest();
+      var data = new FormData(form);
 
       var callback = function(err, res) {
         try {
@@ -98,7 +99,11 @@
       };
 
       var handleError = function(e) {
-        callback(new Error("request failed"), null);
+        var debug = '';
+        for(var pair of data.entries()) {
+          debug += pair[0] + '=' + pair[1] + ' / ';
+        }
+        callback(new Error('request failed: ' + debug), null);
       };
 
       var handleLoad = function(e) {
@@ -113,7 +118,7 @@
       request.addEventListener('load', handleLoad);
 
       request.open(form.method, form.action);
-      request.send(new FormData(form));
+      request.send(data);
     });
   }
 })()
