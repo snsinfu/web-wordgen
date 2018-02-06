@@ -30,3 +30,16 @@ select {
   margin: 5px;
   border-bottom: 5px solid #eee;
 }
+
+nav .show:checked ~ .menu {
+  width: 12em;
+}
+
+nav .show ~ .menu .unburger {
+  float: right;
+  display: none;
+}
+
+nav .show:checked ~ .menu .unburger {
+  display: block;
+}
