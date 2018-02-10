@@ -27,7 +27,7 @@ func main() {
 	}
 
 	action := NewAction(domain)
-	e.GET("/words", action.GetWords)
+	e.POST("/requests", action.PostRequest)
 
 	e.File("/", "index.html")
 	e.File("/index.css", "index.css")

@@ -16,12 +16,12 @@ func NewAction(domain *Domain) *Action {
 	return &Action{domain}
 }
 
-// GET /words {model, prefix, count}
-func (a *Action) GetWords(c echo.Context) error {
-	model := c.QueryParam("model")
-	prefix := strings.ToLower(c.QueryParam("prefix"))
+// POST /requests {model, count}
+func (a *Action) PostRequest(c echo.Context) error {
+	model := c.FormValue("model")
+	prefix := strings.ToLower(c.FormValue("prefix"))
 
-	count, err := strconv.Atoi(c.QueryParam("count"))
+	count, err := strconv.Atoi(c.FormValue("count"))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{
 			"error": err.Error(),
