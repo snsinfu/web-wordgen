@@ -1,0 +1,87 @@
+---
+apiVersion: v1
+kind: Namespace
+
+metadata:
+  name: wordgen
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  namespace: wordgen
+  name: web
+  labels: &labels
+    app: wordgen
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels: *labels
+
+  template:
+    metadata:
+      labels: *labels
+
+    spec:
+      containers:
+        - name: wordgen
+          image: localhost/wordgen/web
+          ports:
+            - containerPort: 8080
+          volumeMounnts:
+            - name: data
+              mountPath: /srv/data
+          securityContext:
+            runAsUser: 5000
+            runAsGroup: 5000
+
+      volumes:
+        - name: data
+          nfs:
+            server: nfs.internal
+            path: /wordgen
+
+
+---
+apiVersion: v1
+kind: Service
+
+metadata:
+  namespace: shaarli
+  name: web
+
+spec:
+  ports:
+    - port: 80
+      targetPort: 8080
+  selector:
+    app: wordgen
+
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+
+metadata:
+  namespace: wordgen
+  name: websecure
+
+spec:
+  entryPoints:
+    - websecure
+
+  routes:
+    - kind: Rule
+      match: Host(`wordgen.origin.illil.io`) || Host(`w.illil.io`)
+      services:
+        - name: web
+          port: 80
+
+  tls:
+    certResolver: letsencrypt
+    domains:
+      - main: wordgen.origin.illil.io
