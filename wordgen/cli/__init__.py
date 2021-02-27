@@ -26,7 +26,7 @@ class Train:
         words = load_words(self._source)
         model = wordgen.train(words, self._token_size)
 
-        with h5py.File(self._output, "w") as output:
+        with h5py.File(self._output, "a") as output:
             store = output.require_group(self._group)
             model.save(store)
 
