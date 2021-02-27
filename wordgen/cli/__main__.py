@@ -2,7 +2,7 @@ import argparse
 import signal
 import sys
 
-from . import Train, Generate
+from .command import Train, Generate
 
 
 def main():
