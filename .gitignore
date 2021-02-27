@@ -4,3 +4,5 @@ _*
 
 *.py[co]
 *.h5
+!__init__.py
+!__main__.py
