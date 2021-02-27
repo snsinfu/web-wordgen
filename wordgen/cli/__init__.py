@@ -32,10 +32,11 @@ class Train:
 
 
 class Generate:
-    def __init__(self, input, group=None, count=None):
+    def __init__(self, input, group=None, count=None, prefix=None):
         self._input = input
         self._group = group or "/"
         self._count = count or DEFAULT_COUNT
+        self._prefix = prefix
 
     def run(self):
         with h5py.File(self._input, "r") as input:
@@ -43,7 +44,7 @@ class Generate:
             model = wordgen.StoredModel(store)
 
             generated = 0
-            for word in wordgen.generate(model):
+            for word in wordgen.generate(model, prefix=self._prefix):
                 if generated >= self._count:
                     break
                 print(word)

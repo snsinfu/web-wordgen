@@ -33,6 +33,7 @@ def parse_args():
     generate_parser = sub.add_parser("generate")
     generate_parser.add_argument("--group", type=str)
     generate_parser.add_argument("--count", type=int)
+    generate_parser.add_argument("--prefix", type=str)
     generate_parser.add_argument("input", type=str)
 
     return vars(parser.parse_args())
