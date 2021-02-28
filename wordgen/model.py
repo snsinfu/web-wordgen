@@ -132,7 +132,7 @@ class StoredModel:
         return self._tokens
 
     @property
-    def prior(self):
+    def initial_prior(self):
         return self._initial_states, self._initial_weights
 
     def posterior(self, i):

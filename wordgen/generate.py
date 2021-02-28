@@ -12,7 +12,7 @@ def generate(model, prefix=None, max_length=64):
 
 def generate_normal(model, max_length):
     tokens = model.tokens
-    initial_states, initial_weights = model.prior
+    initial_states, initial_weights = model.initial_prior
 
     while True:
         state, = random.choices(initial_states, initial_weights)
@@ -66,7 +66,7 @@ def get_prefix_state(model, prefix):
         except ValueError:
             return None
 
-    initial_states, initial_weights = model.prior
+    initial_states, initial_weights = model.initial_prior
     prefix_states = []
     prefix_weights = []
     for state, weight in zip(initial_states, initial_weights):
