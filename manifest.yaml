@@ -52,7 +52,7 @@ apiVersion: v1
 kind: Service
 
 metadata:
-  namespace: shaarli
+  namespace: wordgen
   name: web
 
 spec:
