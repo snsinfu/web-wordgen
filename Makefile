@@ -18,6 +18,7 @@ ARTIFACTS = \
   _model_simple.ok \
   _model_universe.ok \
   _model_name.ok \
+  _model_name4G.ok \
   _model.ok
 
 
@@ -44,10 +45,14 @@ _model_universe.ok: _init.ok $(UNIVERSE_SOURCES)
 	@touch $@
 
 _model_name.ok: _init.ok $(NAME_SOURCES)
-	cat $(NAME_SOURCES) | $(WORDGEN) train --group Name _data/models.h5
+	cat $(NAME_SOURCES) | $(WORDGEN) train --group Name --token-size 3 _data/models.h5
 	@touch $@
 
-_model.ok: _model_simple.ok _model_universe.ok _model_name.ok
+_model_name4G.ok: _init.ok $(NAME_SOURCES)
+	cat $(NAME_SOURCES) | $(WORDGEN) train --group Name4G --token-size 4 _data/models.h5
+	@touch $@
+
+_model.ok: _model_simple.ok _model_universe.ok _model_name.ok _model_name4G.ok
 	@touch $@
 
 _data/usernames_sanitized.txt: _data/usernames.txt

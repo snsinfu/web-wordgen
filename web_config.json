@@ -1,4 +1,4 @@
 {
     "model_store": "data/models.h5",
-    "models": ["Simple", "Universe", "Name"]
+    "models": ["Simple", "Universe", "Name", "Name4"]
 }
